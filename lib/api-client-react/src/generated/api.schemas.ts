@@ -173,6 +173,7 @@ export interface LeaderboardEntry {
   wpm: number;
   accuracy: number;
   difficulty: LeaderboardEntryDifficulty;
+  racedAt: string;
 }
 
 export interface UserStats {

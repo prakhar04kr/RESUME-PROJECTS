@@ -235,7 +235,8 @@ export const GetLeaderboardResponseItem = zod.object({
   "username": zod.string(),
   "wpm": zod.number(),
   "accuracy": zod.number(),
-  "difficulty": zod.enum(['easy', 'medium', 'hard'])
+  "difficulty": zod.enum(['easy', 'medium', 'hard']),
+  "racedAt": zod.coerce.date()
 })
 export const GetLeaderboardResponse = zod.array(GetLeaderboardResponseItem)
 

@@ -13,4 +13,5 @@ export interface LeaderboardEntry {
   wpm: number;
   accuracy: number;
   difficulty: LeaderboardEntryDifficulty;
+  racedAt: Date;
 }

@@ -575,7 +575,7 @@ components:
 
     LeaderboardEntry:
       type: object
-      required: [rank, username, wpm, accuracy, difficulty]
+      required: [rank, username, wpm, accuracy, difficulty, racedAt]
       properties:
         rank:
           type: integer
@@ -588,6 +588,9 @@ components:
         difficulty:
           type: string
           enum: [easy, medium, hard]
+        racedAt:
+          type: string
+          format: date-time
 
     UserStats:
       type: object
