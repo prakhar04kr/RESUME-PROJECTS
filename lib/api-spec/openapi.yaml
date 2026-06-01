@@ -3,13 +3,22 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: TypeRacer API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: games
+    description: Game operations
+  - name: results
+    description: Result operations
+  - name: leaderboard
+    description: Leaderboard operations
+
 paths:
   /healthz:
     get:
@@ -24,7 +33,345 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /games/random:
+    get:
+      operationId: getRandomGame
+      tags: [games]
+      summary: Get a random game
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: difficulty
+          schema:
+            type: string
+            enum: [easy, medium, hard]
+      responses:
+        "200":
+          description: A random game
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+        "404":
+          description: No games found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /games:
+    get:
+      operationId: listGames
+      tags: [games]
+      summary: List all games (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Paginated games list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameListResponse"
+    post:
+      operationId: createGame
+      tags: [games]
+      summary: Create a game (admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GameInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /games/{id}:
+    patch:
+      operationId: updateGame
+      tags: [games]
+      summary: Update a game (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GamePatch"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteGame
+      tags: [games]
+      summary: Delete a game (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /results:
+    post:
+      operationId: createResult
+      tags: [results]
+      summary: Save a game result
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResultInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Result"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /results/history:
+    get:
+      operationId: getResultHistory
+      tags: [results]
+      summary: Get result history for current user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Paginated result history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResultHistoryResponse"
+
+  /results/{id}:
+    get:
+      operationId: getResult
+      tags: [results]
+      summary: Get a specific result
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Result with game paragraph
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResultDetail"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags: [leaderboard]
+      summary: Get leaderboard (Redis cached)
+      parameters:
+        - in: query
+          name: difficulty
+          schema:
+            type: string
+            enum: [all, easy, medium, hard]
+            default: all
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Leaderboard entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+
+  /stats/me:
+    get:
+      operationId: getMyStats
+      tags: [results]
+      summary: Get personal stats for current user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Personal stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserStats"
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     HealthStatus:
       type: object
@@ -34,3 +381,227 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    User:
+      type: object
+      required: [id, email, username, role, createdAt]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        username:
+          type: string
+        role:
+          type: string
+          enum: [user, admin]
+        createdAt:
+          type: string
+          format: date-time
+
+    AuthResponse:
+      type: object
+      required: [token, user]
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+
+    RegisterInput:
+      type: object
+      required: [email, username, password]
+      properties:
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+          minLength: 3
+          maxLength: 20
+        password:
+          type: string
+          minLength: 8
+
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    Game:
+      type: object
+      required: [id, paragraph, difficulty, createdAt]
+      properties:
+        id:
+          type: integer
+        paragraph:
+          type: string
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    GameListResponse:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Game"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    GameInput:
+      type: object
+      required: [paragraph, difficulty]
+      properties:
+        paragraph:
+          type: string
+          minLength: 80
+          maxLength: 500
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+
+    GamePatch:
+      type: object
+      properties:
+        paragraph:
+          type: string
+          minLength: 80
+          maxLength: 500
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+
+    Result:
+      type: object
+      required: [id, userId, gameId, wpm, accuracy, timeTakenMs, createdAt]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        gameId:
+          type: integer
+        wpm:
+          type: number
+        accuracy:
+          type: number
+        timeTakenMs:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    ResultDetail:
+      type: object
+      required: [id, userId, gameId, wpm, accuracy, timeTakenMs, createdAt, paragraph, difficulty, username]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        gameId:
+          type: integer
+        wpm:
+          type: number
+        accuracy:
+          type: number
+        timeTakenMs:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        paragraph:
+          type: string
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        username:
+          type: string
+        personalBestWpm:
+          type: ["number", "null"]
+
+    ResultHistoryResponse:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ResultDetail"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    ResultInput:
+      type: object
+      required: [gameId, wpm, accuracy, timeTakenMs]
+      properties:
+        gameId:
+          type: integer
+        wpm:
+          type: number
+        accuracy:
+          type: number
+        timeTakenMs:
+          type: integer
+
+    LeaderboardEntry:
+      type: object
+      required: [rank, username, wpm, accuracy, difficulty]
+      properties:
+        rank:
+          type: integer
+        username:
+          type: string
+        wpm:
+          type: number
+        accuracy:
+          type: number
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+
+    UserStats:
+      type: object
+      required: [totalRaces, bestWpm, avgWpm, avgAccuracy, recentResults]
+      properties:
+        totalRaces:
+          type: integer
+        bestWpm:
+          type: ["number", "null"]
+        avgWpm:
+          type: ["number", "null"]
+        avgAccuracy:
+          type: ["number", "null"]
+        recentResults:
+          type: array
+          items:
+            $ref: "#/components/schemas/Result"
