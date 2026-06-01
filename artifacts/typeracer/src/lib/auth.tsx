@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import type { User } from "@workspace/api-client-react";
+import { setAuthTokenGetter } from "@workspace/api-client-react";
 
 interface AuthContextType {
   user: User | null;
@@ -16,13 +17,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
   const [isLoading, setIsLoading] = useState(true);
 
+  // Keep the API client's auth getter in sync with the current token
+  useEffect(() => {
+    setAuthTokenGetter(() => localStorage.getItem("token"));
+    return () => setAuthTokenGetter(null);
+  }, []);
+
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (!storedToken) {
       setIsLoading(false);
       return;
     }
-    // Restore session by verifying token with /api/auth/me
     fetch("/api/auth/me", {
       headers: { Authorization: `Bearer ${storedToken}` },
     })

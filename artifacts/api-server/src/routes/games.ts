@@ -6,7 +6,7 @@ import { cacheDel } from "../lib/redis";
 
 const router = Router();
 
-router.get("/games/random", authGuard, async (req: AuthRequest, res): Promise<void> => {
+router.get("/games/random", async (req: AuthRequest, res): Promise<void> => {
   const difficulty = req.query["difficulty"] as string | undefined;
 
   let query = db.select().from(gamesTable);
