@@ -78,7 +78,7 @@ export default function Home() {
         <div className="divide-y divide-border">
           {!leaderboard?.length ? (
             <div className="py-10 text-center text-muted-foreground text-sm">No races yet — be the first!</div>
-          ) : leaderboard.map((entry, i) => (
+          ) : leaderboard.map((entry: any, i: number) => (
             <div key={i} className={`flex items-center justify-between px-6 py-4 ${user?.username === entry.username ? "bg-primary/5" : "hover:bg-muted/30"} transition-colors`}>
               <div className="flex items-center gap-4">
                 <span className="w-8 text-xl text-center">{MEDAL[entry.rank] ?? <span className="font-mono text-muted-foreground text-sm">{entry.rank}</span>}</span>

@@ -63,7 +63,7 @@ export default function Leaderboard() {
                 </TableCell>
               </TableRow>
             ) : (
-              entries.map((entry, idx) => (
+              entries.map((entry: any, idx: number) => (
                 <TableRow
                   key={`${entry.username}-${idx}`}
                   className={user?.username === entry.username ? "bg-primary/10 border-l-2 border-l-primary" : ""}

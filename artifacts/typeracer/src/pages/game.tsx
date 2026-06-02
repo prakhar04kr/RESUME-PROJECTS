@@ -68,7 +68,7 @@ export default function Game() {
           timeTakenMs: elapsedMs
         }
       }, {
-        onSuccess: (res) => {
+        onSuccess: (res: any) => {
           setLocation(`/results/${res.id}`);
         }
       });
@@ -117,7 +117,7 @@ export default function Game() {
           disabled={isComplete}
         />
         <div className="pointer-events-none select-none">
-          {game.paragraph.split("").map((char, index) => {
+          {game.paragraph.split("").map((char: string, index: number) => {
             let className = "text-muted-foreground/40"; // untyped
             if (index < typed.length) {
               if (errors.has(index)) {

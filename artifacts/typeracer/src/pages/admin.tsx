@@ -1,13 +1,37 @@
 import { useState } from "react";
-import { useListGames, getListGamesQueryKey, useCreateGame, useUpdateGame, useDeleteGame } from "@workspace/api-client-react";
+import {
+  useListGames,
+  getListGamesQueryKey,
+  useCreateGame,
+  useUpdateGame,
+  useDeleteGame,
+} from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { useLocation } from "wouter";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 
@@ -27,13 +51,20 @@ export default function Admin() {
   const [editDifficulty, setEditDifficulty] = useState<"easy" | "medium" | "hard">("medium");
 
   if (user && user.role !== "admin") {
-    toast({ title: "Access Denied", description: "Admin clearance required", variant: "destructive" });
+    toast({
+      title: "Access Denied",
+      description: "Admin clearance required",
+      variant: "destructive",
+    });
     setLocation("/");
     return null;
   }
 
   const { data: gamesData, isLoading } = useListGames({ limit: 100 }, {
-    query: { enabled: user?.role === "admin", queryKey: getListGamesQueryKey({ limit: 100 }) }
+    query: {
+      enabled: user?.role === "admin",
+      queryKey: getListGamesQueryKey({ limit: 100 }),
+    },
   });
 
   const createGame = useCreateGame();
@@ -50,8 +81,12 @@ export default function Admin() {
         toast({ title: "Success", description: "Track added successfully." });
       },
       onError: (err: any) => {
-        toast({ title: "Error", description: err?.message || "Failed to add track", variant: "destructive" });
-      }
+        toast({
+          title: "Error",
+          description: err?.message || "Failed to add track",
+          variant: "destructive",
+        });
+      },
     });
   };
 
@@ -63,8 +98,12 @@ export default function Admin() {
         toast({ title: "Success", description: "Track updated successfully." });
       },
       onError: (err: any) => {
-        toast({ title: "Error", description: err?.message || "Failed to update track", variant: "destructive" });
-      }
+        toast({
+          title: "Error",
+          description: err?.message || "Failed to update track",
+          variant: "destructive",
+        });
+      },
     });
   };
 
@@ -74,7 +113,7 @@ export default function Admin() {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListGamesQueryKey({ limit: 100 }) });
         toast({ title: "Success", description: "Track deleted." });
-      }
+      },
     });
   };
 
@@ -85,7 +124,7 @@ export default function Admin() {
           <h1 className="text-4xl font-bold tracking-tighter text-primary mb-2">SYSTEM ADMINISTRATION</h1>
           <p className="text-muted-foreground">Manage racing tracks and system parameters.</p>
         </div>
-        
+
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <DialogTrigger asChild>
             <Button className="font-bold">ADD TRACK</Button>
@@ -108,6 +147,7 @@ export default function Admin() {
                   </SelectContent>
                 </Select>
               </div>
+
               <div className="space-y-2">
                 <label className="text-sm font-bold text-muted-foreground flex justify-between">
                   <span>Content</span>
@@ -115,13 +155,14 @@ export default function Admin() {
                     {paragraph.length} / 500
                   </span>
                 </label>
-                <Textarea 
-                  value={paragraph} 
-                  onChange={e => setParagraph(e.target.value)}
+                <Textarea
+                  value={paragraph}
+                  onChange={(e) => setParagraph(e.target.value)}
                   className="min-h-[150px] font-mono"
                   placeholder="Enter track text here..."
                 />
               </div>
+
               <Button onClick={handleCreate} disabled={createGame.isPending} className="w-full">
                 {createGame.isPending ? "SAVING..." : "SAVE TRACK"}
               </Button>
@@ -140,18 +181,25 @@ export default function Admin() {
               <TableHead className="w-32 text-right font-bold">ACTIONS</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">LOADING...</TableCell>
+                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                  LOADING...
+                </TableCell>
               </TableRow>
-            ) : gamesData?.data.map((game) => (
+            ) : gamesData?.data?.map((game: any) => (
               <TableRow key={game.id}>
                 {editingId === game.id ? (
                   <>
                     <TableCell>{game.id}</TableCell>
+
                     <TableCell>
-                      <Select value={editDifficulty} onValueChange={(v: any) => setEditDifficulty(v)}>
+                      <Select
+                        value={editDifficulty}
+                        onValueChange={(v: any) => setEditDifficulty(v)}
+                      >
                         <SelectTrigger className="h-8">
                           <SelectValue />
                         </SelectTrigger>
@@ -162,16 +210,26 @@ export default function Admin() {
                         </SelectContent>
                       </Select>
                     </TableCell>
+
                     <TableCell>
-                      <Textarea 
-                        value={editParagraph} 
-                        onChange={e => setEditParagraph(e.target.value)}
+                      <Textarea
+                        value={editParagraph}
+                        onChange={(e) => setEditParagraph(e.target.value)}
                         className="min-h-[80px] font-mono text-sm"
                       />
                     </TableCell>
+
                     <TableCell className="text-right space-x-2">
-                      <Button size="sm" onClick={() => handleUpdate(game.id)} disabled={updateGame.isPending}>SAVE</Button>
-                      <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}>CANCEL</Button>
+                      <Button
+                        size="sm"
+                        onClick={() => handleUpdate(game.id)}
+                        disabled={updateGame.isPending}
+                      >
+                        SAVE
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}>
+                        CANCEL
+                      </Button>
                     </TableCell>
                   </>
                 ) : (
@@ -182,12 +240,24 @@ export default function Admin() {
                       {game.paragraph}
                     </TableCell>
                     <TableCell className="text-right space-x-2">
-                      <Button variant="outline" size="sm" onClick={() => {
-                        setEditingId(game.id);
-                        setEditParagraph(game.paragraph);
-                        setEditDifficulty(game.difficulty);
-                      }}>EDIT</Button>
-                      <Button variant="destructive" size="sm" onClick={() => handleDelete(game.id)}>DEL</Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setEditingId(game.id);
+                          setEditParagraph(game.paragraph);
+                          setEditDifficulty(game.difficulty);
+                        }}
+                      >
+                        EDIT
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDelete(game.id)}
+                      >
+                        DEL
+                      </Button>
                     </TableCell>
                   </>
                 )}
@@ -199,3 +269,4 @@ export default function Admin() {
     </div>
   );
 }
+

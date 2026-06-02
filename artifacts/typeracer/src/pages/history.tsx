@@ -39,7 +39,7 @@ export default function History() {
                 <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">NO RACES COMPLETED YET</TableCell>
               </TableRow>
             ) : (
-              history?.data.map((result) => (
+              history?.data.map((result: any) => (
                 <TableRow key={result.id}>
                   <TableCell className="text-muted-foreground">
                     {new Date(result.createdAt).toLocaleDateString()}

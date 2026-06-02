@@ -43,7 +43,7 @@ export default function Auth() {
 
   const onLogin = (data: z.infer<typeof loginSchema>) => {
     loginMutation.mutate({ data }, {
-      onSuccess: (res) => {
+      onSuccess: (res: any) => {
         setAuth(res.token, res.user);
         setLocation("/game");
       },
@@ -55,7 +55,7 @@ export default function Auth() {
 
   const onRegister = (data: z.infer<typeof registerSchema>) => {
     registerMutation.mutate({ data }, {
-      onSuccess: (res) => {
+      onSuccess: (res: any) => {
         setAuth(res.token, res.user);
         setLocation("/game");
       },
@@ -170,3 +170,4 @@ export default function Auth() {
     </div>
   );
 }
+
