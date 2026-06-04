@@ -1,0 +1,194 @@
+🇮🇳 India Government Schemes Portal — Full Project Prompt
+
+PROJECT OVERVIEW
+Build a full-stack React web application called "YojanaConnect" (or "योजना कनेक्ट") — a smart, age-adaptive portal that helps Indian citizens discover central and state government schemes based on their age group, financial need, and life sector, with multi-language support.
+
+PHASE 1 — AGE-ADAPTIVE UI SYSTEM
+On first load, show an Age Detection / Selection Screen:
+
+Ask user: "What is your age?" via a stylized input or slider
+Optionally allow DOB entry
+Detect and apply UI theme based on age group:
+
+
+🎨 UI THEME SYSTEM (3 Modes)
+Teen Mode (13–19 yrs)
+
+Stack: React + TailwindCSS + Framer Motion
+Aesthetic: Bold neon gradients (electric purple, hot pink, cyan), glassmorphism cards, animated particle background (use tsparticles)
+Typography: Syne (headings) + DM Sans (body) from Google Fonts
+Animations: Card flip reveals, bouncy hover effects, scrolling marquee with scheme names, glowing CTA buttons
+Mascot: Animated cartoon character (SVG) guiding the teen
+Vibe: Like a gaming UI meets Instagram Stories
+
+Middle Age Mode (20–55 yrs)
+
+Stack: React + Three.js (for 3D hero) + Framer Motion
+Aesthetic: Deep navy + gold, professional 3D animated globe/building in the hero section using @react-three/fiber, smooth scroll transitions
+Typography: Playfair Display (headings) + Source Sans 3 (body)
+Animations: 3D card tilt on hover (react-tilt), animated counters for scheme stats, scroll-triggered section reveals
+Vibe: Premium fintech/government dashboard feel
+
+Senior Mode (56+ yrs)
+
+Stack: React + plain CSS animations
+Aesthetic: Soft whites, warm saffron/cream, large fonts (min 18px body, 28px headings), high contrast
+Typography: Noto Serif Devanagari + Lora
+Animations: Subtle fade-ins only, no jarring movement
+Accessibility: aria-labels everywhere, keyboard-navigable, text-to-speech toggle using Web Speech API
+Vibe: Newspaper clarity meets government trust
+
+
+PHASE 2 — MULTI-LANGUAGE SUPPORT
+Use i18next + react-i18next.
+Support these languages (with toggle in navbar):
+
+🇮🇳 Hindi (हिन्दी)
+🇮🇳 English
+🇮🇳 Bengali (বাংলা)
+🇮🇳 Tamil (தமிழ்)
+🇮🇳 Telugu (తెలుగు)
+🇮🇳 Marathi (मराठी)
+🇮🇳 Gujarati (ગુજરાતી)
+🇮🇳 Kannada (ಕನ್ನಡ)
+
+Store language preference in localStorage. All scheme names, descriptions, document lists, and T&Cs must be translated.
+
+PHASE 3 — SCHEME DISCOVERY ENGINE
+Smart Filter System (shown after age selection):
+Step 1 — Sector Selection (based on age group):
+Age GroupSectors ShownTeen (13–19)Education, Scholarships, Skill Training, Sports, Digital LiteracyYoung Adult (20–35)Startup/Business, Housing, Employment, Marriage, Higher EducationMiddle Age (36–55)Business Loans, Tax Benefits, Health Insurance, Agriculture, HousingSenior (56+)Pension, Health/Medical, Old Age Homes, Social Security, Family Support
+Step 2 — Financial Need Filter:
+
+Income bracket selector (Below ₹1L / ₹1–3L / ₹3–8L / Above ₹8L annually)
+Category: General / OBC / SC / ST / Minority / PwD / Women / Ex-Serviceman
+
+Step 3 — Location: Central Schemes (all India) vs State (dropdown to select state)
+
+PHASE 4 — SCHEME DATA STRUCTURE
+Each scheme object should follow this schema:
+json{
+  "id": "pm-scholarship-001",
+  "name": "PM Scholarship Scheme",
+  "nameHindi": "पीएम छात्रवृत्ति योजना",
+  "ministry": "Ministry of Education",
+  "ageGroups": ["teen", "youngAdult"],
+  "sectors": ["education", "scholarship"],
+  "incomeLimit": 800000,
+  "categories": ["general", "obc", "sc", "st"],
+  "benefit": "₹25,000/year scholarship",
+  "description": "Full 3-paragraph detailed description...",
+  "eligibility": ["Indian citizen", "Age 13-25", "Min 60% in last exam"],
+  "documents": ["Aadhaar Card", "Income Certificate", "Marksheet", "Bank Passbook", "Caste Certificate (if applicable)"],
+  "howToApply": "Step-by-step application process...",
+  "officialLink": "https://scholarships.gov.in",
+  "deadline": "31 December 2025",
+  "termsAndConditions": ["Scholarship renewable annually", "Minimum 60% required to continue", ...],
+  "isState": false,
+  "state": null,
+  "tags": ["education", "money", "scholarship"],
+  "popularityScore": 95
+}
+
+PHASE 5 — SCHEME DETAIL PAGE
+Each scheme gets a full detail page (/scheme/:id) with:
+
+Hero section: Scheme name, ministry logo, benefit highlight badge
+Overview tab: What is the scheme, who benefits, why it exists
+Eligibility tab: Checklist UI (✅ / ❌ based on user's profile)
+Documents tab: Download checklist as PDF (react-to-print), document descriptions, where to get each one
+How to Apply tab: Numbered step-by-step guide with screenshots/icons
+Terms & Conditions tab: Accordion-style expandable T&Cs
+Official Links: Styled button to official government portal
+Share: WhatsApp / Copy link buttons (crucial for rural reach)
+Related Schemes: 3 similar scheme cards
+
+
+PHASE 6 — TWO MAIN SECTIONS (Navbar)
+🏛️ Central Schemes
+
+Schemes from Central Government (PM/Ministry level)
+Available to all Indians regardless of state
+Source: MyScheme.gov.in, NationalScholarships.gov.in, etc.
+Label: 🇮🇳 Central
+
+🗺️ State Schemes (Placeholder / Future)
+
+Show a beautiful "Coming Soon" page for each state
+State map of India (SVG, clickable) — clicking a state shows "We're adding [State] schemes soon. Be notified?"
+Email/phone capture form for notifications
+Show 1–2 sample state schemes per state as preview cards (grayed out / locked)
+
+
+PHASE 7 — INITIAL SCHEME DATA (Hardcode these first)
+Populate at minimum these real schemes across age groups:
+Teen/Education:
+
+PM Scholarship Scheme
+National Means-cum-Merit Scholarship (NMMSS)
+Beti Bachao Beti Padhao
+Pradhan Mantri Kaushal Vikas Yojana (PMKVY)
+NSP (National Scholarship Portal) schemes
+
+Young Adult/Business/Housing:
+
+PM Mudra Yojana (Shishu/Kishore/Tarun)
+Startup India Seed Fund
+PM Awas Yojana (Urban + Rural)
+Stand-Up India
+Ayushman Bharat (Pradhan Mantri Jan Arogya Yojana)
+
+Middle Age/Agriculture/Health:
+
+PM Kisan Samman Nidhi
+PM Fasal Bima Yojana
+Atal Pension Yojana
+PM Jan Dhan Yojana
+MSME Credit Guarantee Scheme
+
+Senior/Pension/Health:
+
+Pradhan Mantri Vaya Vandana Yojana
+Indira Gandhi National Old Age Pension Scheme
+Ayushman Bharat (Senior Citizen card)
+Senior Citizens Savings Scheme (SCSS)
+PM SVANidhi (for street vendors)
+
+
+TECH STACK RECOMMENDATION
+LayerTechnologyFrontendReact 18 + ViteStylingTailwindCSS + CSS ModulesAnimationsFramer Motion + Three.jsi18ni18next + react-i18nextRoutingReact Router v6StateZustand (user profile: age, language, income, category)PDF exportreact-to-printIconsLucide React + React IconsFontsGoogle Fonts (dynamic per theme)Backend (future)Node.js + Express + MongoDB (for state schemes + user saved schemes)HostingVercel (frontend) + Railway (backend)
+
+FOLDER STRUCTURE
+src/
+├── themes/
+│   ├── teenTheme.css
+│   ├── middleTheme.css
+│   └── seniorTheme.css
+├── i18n/
+│   └── locales/ (en, hi, bn, ta, te, mr, gu, kn)
+├── data/
+│   └── schemes.js (all central scheme objects)
+├── components/
+│   ├── AgeSelector/
+│   ├── SchemeCard/
+│   ├── SchemeDetail/
+│   ├── FilterPanel/
+│   ├── Navbar/
+│   └── StateMap/
+├── pages/
+│   ├── Home.jsx
+│   ├── CentralSchemes.jsx
+│   ├── StateSchemes.jsx
+│   ├── SchemeDetail.jsx
+│   └── ComingSoon.jsx
+└── store/
+    └── userStore.js (Zustand)
+
+KEY UX FLOWS
+
+Landing → Age input → Theme activates → Language selector → Home
+Home → "Find My Schemes" CTA → Filter wizard (sector → income → category) → Scheme grid
+Scheme Card click → Detail page (tabs: Overview / Eligibility / Docs / Apply / T&Cs)
+Eligibility Check: User fills mini-profile → Green/Red indicators on each scheme
+Save Scheme: Bookmark to local profile (localStorage for now)
+Share: WhatsApp deep link with scheme summary

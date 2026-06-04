@@ -1,0 +1,311 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: YojanaConnect API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: schemes
+    description: Government scheme operations
+  - name: stats
+    description: Statistics and aggregates
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /schemes:
+    get:
+      operationId: listSchemes
+      tags: [schemes]
+      summary: List government schemes with filters
+      parameters:
+        - name: ageGroup
+          in: query
+          schema:
+            type: string
+            enum: [teen, youngAdult, middleAge, senior]
+        - name: sector
+          in: query
+          schema:
+            type: string
+        - name: incomeLimit
+          in: query
+          schema:
+            type: integer
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: isState
+          in: query
+          schema:
+            type: boolean
+        - name: state
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of schemes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Scheme"
+
+  /schemes/popular:
+    get:
+      operationId: getPopularSchemes
+      tags: [schemes]
+      summary: Get top popular schemes sorted by popularity score
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: ageGroup
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Popular schemes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Scheme"
+
+  /schemes/stats:
+    get:
+      operationId: getSchemesStats
+      tags: [stats]
+      summary: Get aggregate stats about all schemes
+      responses:
+        "200":
+          description: Scheme statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchemesStats"
+
+  /schemes/{id}:
+    get:
+      operationId: getScheme
+      tags: [schemes]
+      summary: Get a single scheme by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Scheme detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Scheme"
+        "404":
+          description: Not found
+
+  /schemes/{id}/related:
+    get:
+      operationId: relatedSchemes
+      tags: [schemes]
+      summary: Get related schemes for a given scheme
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Related schemes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Scheme"
+
+  /sectors:
+    get:
+      operationId: listSectors
+      tags: [schemes]
+      summary: List available sectors, optionally filtered by age group
+      parameters:
+        - name: ageGroup
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of sectors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Sector"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    Scheme:
+      type: object
+      required:
+        - id
+        - name
+        - nameHindi
+        - ministry
+        - ageGroups
+        - sectors
+        - benefit
+        - description
+        - eligibility
+        - documents
+        - howToApply
+        - officialLink
+        - isState
+        - popularityScore
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        nameHindi:
+          type: string
+        ministry:
+          type: string
+        ageGroups:
+          type: array
+          items:
+            type: string
+        sectors:
+          type: array
+          items:
+            type: string
+        incomeLimit:
+          type: ["integer", "null"]
+        categories:
+          type: array
+          items:
+            type: string
+        benefit:
+          type: string
+        description:
+          type: string
+        eligibility:
+          type: array
+          items:
+            type: string
+        documents:
+          type: array
+          items:
+            type: string
+        howToApply:
+          type: string
+        officialLink:
+          type: string
+        deadline:
+          type: ["string", "null"]
+        termsAndConditions:
+          type: array
+          items:
+            type: string
+        isState:
+          type: boolean
+        state:
+          type: ["string", "null"]
+        tags:
+          type: array
+          items:
+            type: string
+        popularityScore:
+          type: integer
+
+    SchemesStats:
+      type: object
+      required:
+        - total
+        - byAgeGroup
+        - bySector
+        - centralSchemes
+        - stateSchemes
+      properties:
+        total:
+          type: integer
+        centralSchemes:
+          type: integer
+        stateSchemes:
+          type: integer
+        byAgeGroup:
+          type: object
+          additionalProperties:
+            type: integer
+        bySector:
+          type: object
+          additionalProperties:
+            type: integer
+
+    Sector:
+      type: object
+      required:
+        - id
+        - name
+        - nameHindi
+        - ageGroups
+        - icon
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        nameHindi:
+          type: string
+        ageGroups:
+          type: array
+          items:
+            type: string
+        icon:
+          type: string

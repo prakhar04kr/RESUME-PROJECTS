@@ -1,0 +1,14 @@
+BACKEND:
+
+cd "C:\Users\Kumar\Desktop\Gov-Scheme-Finder (1)\backend-mysql"
+npm run dev
+
+FRONTEND :
+
+cd "C:\Users\Kumar\Desktop\Gov-Scheme-Finder (1)"
+pnpm --filter @workspace/yojana-connect dev
+
+
+TERMINATE :
+
+taskkill /F /IM node.exe
